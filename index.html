@@ -59,7 +59,6 @@
     .screen { display: none; width: 100%; max-width: 1100px; flex: 1; }
     .screen.active { display: flex; flex-direction: column; align-items: center; }
 
-    /* —— Start —— */
     #screen-start { justify-content: center; text-align: center; gap: 12px; }
     .logo {
       width: 112px; height: 112px;
@@ -102,29 +101,33 @@
       min-height: 80px;
     }
     .btn-start:active { transform: translateY(4px); box-shadow: 0 4px 0 var(--accent-dark); }
-    .parent-note { margin-top: 28px; font-size: 13px; color: #9A99B0; }
+    .parent-note { margin-top: 28px; font-size: 13px; color: #9A99B0; max-width: 440px; line-height: 1.6; }
 
-    /* —— Quiz —— */
     #screen-quiz { justify-content: flex-start; }
     .quiz-top {
       width: 100%;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       padding: 8px 4px 12px;
     }
-    .progress-wrap { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-    .progress-label { font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums; }
-    .progress-bar {
-      height: 10px; background: rgba(255,255,255,0.7);
-      border-radius: 99px; overflow: hidden;
+    .stars {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      justify-content: center;
+      min-height: 16px;
+      max-width: 520px;
     }
-    .progress-bar > span {
-      display: block; height: 100%; width: 0%;
-      background: var(--sky);
-      border-radius: 99px;
-      transition: width 0.35s ease;
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.75);
+      box-shadow: inset 0 0 0 2px rgba(91,180,232,0.28);
     }
+    .dot.filled { background: #F3D27A; box-shadow: none; }
+    .dot.current { background: #fff; box-shadow: 0 0 0 2px #5BB4E8; }
 
     .speaker {
       margin: 4px 0 16px;
@@ -187,7 +190,6 @@
       to { opacity: 1; transform: none; }
     }
 
-    /* —— Result —— */
     #screen-result {
       justify-content: flex-start;
       overflow: auto;
@@ -212,7 +214,13 @@
       margin: 8px 0 0;
       letter-spacing: -0.02em;
     }
-    .score-pct { color: var(--muted); font-size: 20px; margin: 4px 0 0; }
+    .score-pct { color: var(--muted); font-size: 20px; margin: 8px 0 0; }
+    .attained {
+      margin: 10px 0 0;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+    }
     .btn-again {
       margin-top: 20px;
       background: var(--accent);
@@ -225,26 +233,42 @@
     }
     .btn-again:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--accent-dark); }
 
-    .lists {
+    .level-wrap, .lists {
       width: 100%;
       max-width: 560px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
       margin-top: 20px;
     }
+    .level-wrap {
+      background: var(--card);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 16px 16px 12px;
+      overflow-x: auto;
+    }
+    .level-wrap h3, .list-card h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+    .level-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+    .level-table th, .level-table td {
+      text-align: center;
+      padding: 8px 6px;
+      border-bottom: 1px solid #EEEAF8;
+    }
+    .level-table th { color: var(--muted); font-weight: 600; font-size: 13px; }
+    .level-table td:first-child, .level-table th:first-child { text-align: left; }
+
     .list-card {
       background: var(--card);
       border-radius: 22px;
       box-shadow: var(--shadow);
       padding: 16px 16px 12px;
-      min-height: 120px;
+      min-height: 80px;
     }
-    .list-card h3 {
-      margin: 0 0 10px;
-      font-size: 16px;
-    }
-    .list-card.known h3 { color: #2E8B57; }
     .list-card.unknown h3 { color: #C45C26; }
     .list-card ul {
       list-style: none;
@@ -255,13 +279,12 @@
       gap: 8px;
     }
     .list-card li {
-      background: #F6F4FF;
+      background: #FFF1E8;
       border-radius: 999px;
       padding: 6px 12px;
       font-size: 15px;
       font-family: "Avenir Next", "Segoe UI", system-ui, sans-serif;
     }
-    .list-card.unknown li { background: #FFF1E8; }
     .list-card .empty { color: #9A99B0; font-size: 14px; }
 
     @media (max-width: 640px) {
@@ -274,7 +297,6 @@
       .choice { min-height: 140px; aspect-ratio: auto; height: 28vh; max-height: 220px; }
       .speaker { width: 76px; height: 76px; }
       .speaker svg { width: 38px; height: 38px; }
-      .lists { grid-template-columns: 1fr; }
     }
 
     @media (min-width: 641px) and (max-height: 700px) {
@@ -291,15 +313,12 @@
       <p class="subtitle" id="subtitle">词汇量小测试</p>
       <p class="hint">点「开始」后会听到一个单词。<br>请让宝宝选出对应的那张图片。<br>听不清可以再点上面的小喇叭。</p>
       <button class="btn btn-start" id="btn-start" type="button">开 始</button>
-      <p class="parent-note">给家长：这是一个样品，共 20 个 P5 单词。测试过程中不会显示英文单词。</p>
+      <p class="parent-note">给家长：这是一套自适应词汇量测试，从简单的开始，大约 20–30 题。测试过程中不会显示英文单词或级别。</p>
     </section>
 
     <section id="screen-quiz" class="screen">
       <div class="quiz-top">
-        <div class="progress-wrap">
-          <div class="progress-label" id="progress-label">1 / 20</div>
-          <div class="progress-bar" aria-hidden="true"><span id="progress-fill"></span></div>
-        </div>
+        <div class="stars" id="stars" aria-hidden="true"></div>
       </div>
       <button class="btn speaker" id="btn-replay" type="button" aria-label="再听一次">
         <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -314,15 +333,21 @@
     <section id="screen-result" class="screen">
       <div class="score-card">
         <h2>测试完成</h2>
-        <div class="score-big" id="score-big">0 / 20</div>
-        <p class="score-pct" id="score-pct">正确率 0%</p>
+        <div class="score-big" id="score-big">约 0 词</div>
+        <p class="attained" id="attained">还未达到 P1 水平</p>
+        <p class="score-pct" id="score-pct"></p>
         <button class="btn btn-again" id="btn-again" type="button">再测一次</button>
       </div>
+      <div class="level-wrap">
+        <h3>各级表现</h3>
+        <table class="level-table">
+          <thead>
+            <tr><th>级别</th><th>题数</th><th>答对</th><th>正确率</th></tr>
+          </thead>
+          <tbody id="level-rows"></tbody>
+        </table>
+      </div>
       <div class="lists">
-        <div class="list-card known">
-          <h3>会的单词</h3>
-          <ul id="list-known"></ul>
-        </div>
         <div class="list-card unknown">
           <h3>还不熟的单词</h3>
           <ul id="list-unknown"></ul>
@@ -336,85 +361,122 @@
     (function () {
       "use strict";
 
-      const audio = new Audio();
+      var MAX_QUESTIONS = 30;
+      var audio = new Audio();
       audio.preload = "auto";
 
-      let data = null;
-      let pool = [];
-      let queue = [];
-      let index = 0;
-      let answers = [];
-      let locked = false;
-      let currentChoices = [];
+      var data = null;
+      var levels = [];
+      var levelIndex = 0;
+      var totalAsked = 0;
+      var consecutiveFails = 0;
+      var askedWords = [];
+      var levelAskedCount = 0;
+      var levelCorrect = 0;
+      var levelResults = [];
+      var answers = [];
+      var locked = false;
+      var currentItem = null;
+      var currentChoices = [];
+      var lastScore = null;
 
-      const $ = (id) => document.getElementById(id);
-      const screens = {
+      var $ = function (id) { return document.getElementById(id); };
+      var screens = {
         start: $("screen-start"),
         quiz: $("screen-quiz"),
         result: $("screen-result"),
       };
 
       function show(name) {
-        Object.keys(screens).forEach((k) => {
+        Object.keys(screens).forEach(function (k) {
           screens[k].classList.toggle("active", k === name);
         });
       }
 
       function shuffle(arr) {
-        const a = arr.slice();
-        for (let i = a.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          const t = a[i]; a[i] = a[j]; a[j] = t;
+        var a = arr.slice();
+        for (var i = a.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = a[i]; a[i] = a[j]; a[j] = t;
         }
         return a;
       }
 
       function playCurrent() {
-        const item = queue[index];
-        if (!item) return;
+        if (!currentItem) return;
         try {
           audio.pause();
           audio.currentTime = 0;
         } catch (e) {}
-        audio.src = item.audio;
-        const p = audio.play();
-        if (p && p.catch) p.catch(function () { /* autoplay may be blocked until a tap */ });
-        const btn = $("btn-replay");
+        audio.src = currentItem.audio;
+        var p = audio.play();
+        if (p && p.catch) p.catch(function () {});
+        var btn = $("btn-replay");
         btn.classList.add("playing");
-        const stopPulse = function () { btn.classList.remove("playing"); };
+        var stopPulse = function () { btn.classList.remove("playing"); };
         audio.onended = stopPulse;
         audio.onpause = stopPulse;
       }
 
-      function pickDistractors(correct, all) {
-        const sameLevel = all.filter(function (w) {
-          return w.word !== correct.word && w.level === correct.level;
-        });
-        const src = sameLevel.length >= 2 ? sameLevel : all.filter(function (w) { return w.word !== correct.word; });
-        return shuffle(src).slice(0, 2);
+      function renderStars() {
+        var box = $("stars");
+        box.innerHTML = "";
+        var i;
+        for (i = 0; i < totalAsked; i++) {
+          var d = document.createElement("span");
+          d.className = "dot" + (i < totalAsked - 1 ? " filled" : " current");
+          box.appendChild(d);
+        }
       }
 
-      function renderQuestion() {
-        const item = queue[index];
-        const total = queue.length;
-        $("progress-label").textContent = (index + 1) + " / " + total;
-        $("progress-fill").style.width = ((index + 1) / total * 100) + "%";
+      function pickDistractors(target, levelIdx) {
+        var used = {};
+        used[target.word] = true;
+        var picks = [];
+        function addFrom(idx) {
+          if (idx < 0 || idx >= levels.length || picks.length >= 2) return;
+          var cands = shuffle(levels[idx].pool.filter(function (w) { return !used[w.word]; }));
+          for (var i = 0; i < cands.length && picks.length < 2; i++) {
+            used[cands[i].word] = true;
+            picks.push(cands[i]);
+          }
+        }
+        addFrom(levelIdx);
+        var d;
+        for (d = 1; picks.length < 2 && d < levels.length; d++) {
+          addFrom(levelIdx + d);
+          addFrom(levelIdx - d);
+        }
+        return picks;
+      }
 
-        const distractors = pickDistractors(item, pool);
-        currentChoices = shuffle([item].concat(distractors));
+      function askQuestion() {
+        var level = levels[levelIndex];
+        var available = level.pool.filter(function (w) {
+          return askedWords.indexOf(w.word) === -1;
+        });
+        if (!available.length) {
+          closeLevelAndAdvance(decideStatus());
+          return;
+        }
+        currentItem = shuffle(available)[0];
+        askedWords.push(currentItem.word);
+        totalAsked += 1;
+        currentChoices = shuffle([currentItem].concat(pickDistractors(currentItem, levelIndex)));
 
-        const box = $("choices");
+        renderStars();
+        var box = $("choices");
         box.classList.remove("leaving");
         box.classList.add("entering");
         box.innerHTML = "";
         currentChoices.forEach(function (choice) {
-          const btn = document.createElement("button");
+          var btn = document.createElement("button");
           btn.type = "button";
           btn.className = "choice";
           btn.setAttribute("data-word", choice.word);
-          btn.setAttribute("data-correct", choice.word === item.word ? "1" : "0");
+          btn.setAttribute("data-correct", choice.word === currentItem.word ? "1" : "0");
           btn.setAttribute("aria-label", "picture choice");
-          const img = document.createElement("img");
+          var img = document.createElement("img");
           img.src = choice.image;
           img.alt = "";
           img.draggable = false;
@@ -422,19 +484,110 @@
           btn.addEventListener("click", function () { onPick(choice, btn); });
           box.appendChild(btn);
         });
-
         locked = false;
         playCurrent();
+      }
+
+      function decideStatus() {
+        var p = levelAskedCount ? levelCorrect / levelAskedCount : 0;
+        if (levelAskedCount >= 3 && levelCorrect === levelAskedCount && levelAskedCount === 3) return "pass";
+        if (levelAskedCount === 5 && levelCorrect >= 4) return "pass";
+        if (p <= 1 / 3) return "fail";
+        if (levelAskedCount === 3 && levelCorrect === 3) return "pass";
+        return "near";
+      }
+
+      function closeLevel(status) {
+        var lv = levels[levelIndex];
+        var p = levelAskedCount ? levelCorrect / levelAskedCount : 0;
+        var missed = answers.filter(function (a) {
+          return a.level === lv.id && !a.correct;
+        }).map(function (a) { return a.word; });
+        levelResults.push({
+          id: lv.id,
+          index: levelIndex,
+          asked: levelAskedCount,
+          correct: levelCorrect,
+          p: p,
+          status: status,
+          unknown: missed
+        });
+        if (status === "fail") consecutiveFails += 1;
+        else consecutiveFails = 0;
+      }
+
+      function beginLevel(i) {
+        levelIndex = i;
+        askedWords = [];
+        levelAskedCount = 0;
+        levelCorrect = 0;
+        askQuestion();
+      }
+
+      function closeLevelAndAdvance(status) {
+        closeLevel(status);
+        if (consecutiveFails >= 2) {
+          finish();
+          return;
+        }
+        if (levelIndex >= levels.length - 1) {
+          finish();
+          return;
+        }
+        if (totalAsked >= MAX_QUESTIONS) {
+          finish();
+          return;
+        }
+        beginLevel(levelIndex + 1);
+      }
+
+      function afterAnswer() {
+        var asked = levelAskedCount;
+        var correct = levelCorrect;
+        var hitCap = totalAsked >= MAX_QUESTIONS;
+
+        if (asked === 3 && correct === 3) {
+          closeLevelAndAdvance("pass");
+          return;
+        }
+        if (asked === 3 && correct <= 1) {
+          closeLevelAndAdvance("fail");
+          return;
+        }
+        if (asked === 3 && correct === 2) {
+          if (hitCap) {
+            closeLevelAndAdvance("near");
+            return;
+          }
+          askQuestion();
+          return;
+        }
+        if (asked === 5) {
+          closeLevelAndAdvance(correct >= 4 ? "pass" : "near");
+          return;
+        }
+        if (hitCap) {
+          closeLevelAndAdvance(decideStatus());
+          return;
+        }
+        askQuestion();
       }
 
       function onPick(choice, btn) {
         if (locked) return;
         locked = true;
-        const item = queue[index];
-        const correct = choice.word === item.word;
-        answers.push({ word: item.word, level: item.level, correct: correct, picked: choice.word });
+        var correct = choice.word === currentItem.word;
+        levelAskedCount += 1;
+        if (correct) levelCorrect += 1;
+        answers.push({
+          word: currentItem.word,
+          level: levels[levelIndex].id,
+          levelIndex: levelIndex,
+          correct: correct,
+          picked: choice.word
+        });
 
-        const box = $("choices");
+        var box = $("choices");
         Array.prototype.forEach.call(box.querySelectorAll(".choice"), function (el) {
           if (el === btn) el.classList.add("picked");
           else el.classList.add("dim");
@@ -444,58 +597,113 @@
           box.classList.remove("entering");
           box.classList.add("leaving");
           window.setTimeout(function () {
-            index += 1;
-            if (index >= queue.length) finish();
-            else renderQuestion();
+            afterAnswer();
           }, 280);
         }, 450);
       }
 
+      function computeScore() {
+        var n = levels.length;
+        var q = [];
+        var i;
+        for (i = 0; i < n; i++) q[i] = null;
+        var first = -1, last = -1;
+        var byId = {};
+        levelResults.forEach(function (r) { byId[r.id] = r; });
+        for (i = 0; i < n; i++) {
+          var r = byId[levels[i].id];
+          if (r && r.asked > 0) {
+            var p = r.correct / r.asked;
+            q[i] = Math.max(0, (p * 3 - 1) / 2);
+            if (first < 0) first = i;
+            last = i;
+          }
+        }
+        if (first < 0) {
+          return { q: q.map(function () { return 0; }), estimate: 0, rounded: 0, attained: null };
+        }
+        for (i = 0; i < first; i++) q[i] = 1;
+        for (i = last + 1; i < n; i++) q[i] = 0;
+        i = first;
+        while (i <= last) {
+          if (q[i] !== null) { i++; continue; }
+          var a = i - 1;
+          var b = i + 1;
+          while (b <= last && q[b] === null) b++;
+          var k;
+          for (k = a + 1; k < b; k++) {
+            q[k] = q[a] + ((k - a) / (b - a)) * (q[b] - q[a]);
+          }
+          i = b;
+        }
+        var raw = 0;
+        for (i = 0; i < n; i++) raw += (q[i] || 0) * (levels[i].newWordCount || 0);
+        var rounded = Math.round(raw / 10) * 10;
+        var attained = null;
+        for (i = 0; i < levelResults.length; i++) {
+          var lr = levelResults[i];
+          if (lr.asked > 0 && lr.correct / lr.asked >= 0.7) attained = lr.id;
+        }
+        return { q: q, estimate: raw, rounded: rounded, attained: attained, first: first, last: last };
+      }
+
       function finish() {
         try { audio.pause(); } catch (e) {}
-        const total = answers.length;
-        const right = answers.filter(function (a) { return a.correct; }).length;
-        const pct = total ? Math.round(right / total * 100) : 0;
-        $("score-big").textContent = right + " / " + total;
-        $("score-pct").textContent = "正确率 " + pct + "%";
+        lastScore = computeScore();
+        $("score-big").textContent = "约 " + lastScore.rounded + " 词";
+        if (lastScore.attained) {
+          $("attained").textContent = "达到 " + lastScore.attained + " 水平";
+        } else {
+          $("attained").textContent = "还未达到 P1 水平";
+        }
+        $("score-pct").textContent = "共测 " + answers.length + " 题";
 
-        const known = $("list-known");
-        const unknown = $("list-unknown");
-        known.innerHTML = "";
+        var tbody = $("level-rows");
+        tbody.innerHTML = "";
+        levelResults.forEach(function (r) {
+          var tr = document.createElement("tr");
+          var pct = r.asked ? Math.round(r.p * 100) : 0;
+          tr.innerHTML = "<td>" + r.id + "</td><td>" + r.asked + "</td><td>" + r.correct + "</td><td>" + pct + "%</td>";
+          tbody.appendChild(tr);
+        });
+
+        var unknown = $("list-unknown");
         unknown.innerHTML = "";
-        const k = answers.filter(function (a) { return a.correct; });
-        const u = answers.filter(function (a) { return !a.correct; });
-        function fill(el, list) {
-          if (!list.length) {
-            const p = document.createElement("p");
-            p.className = "empty";
-            p.textContent = "没有";
-            el.appendChild(p);
-            return;
-          }
-          list.forEach(function (a) {
-            const li = document.createElement("li");
+        var missed = answers.filter(function (a) { return !a.correct; });
+        if (!missed.length) {
+          var p = document.createElement("p");
+          p.className = "empty";
+          p.textContent = "没有";
+          unknown.appendChild(p);
+        } else {
+          missed.forEach(function (a) {
+            var li = document.createElement("li");
             li.textContent = a.word;
-            el.appendChild(li);
+            unknown.appendChild(li);
           });
         }
-        fill(known, k);
-        fill(unknown, u);
         show("result");
       }
 
       function startQuiz() {
-        pool = data.words.slice();
-        queue = shuffle(pool);
-        index = 0;
+        levelIndex = 0;
+        totalAsked = 0;
+        consecutiveFails = 0;
+        askedWords = [];
+        levelAskedCount = 0;
+        levelCorrect = 0;
+        levelResults = [];
         answers = [];
         locked = false;
+        currentItem = null;
+        currentChoices = [];
+        lastScore = null;
         show("quiz");
-        renderQuestion();
+        beginLevel(0);
       }
 
       function loadData() {
-        if (window.VOCAB_DATA && window.VOCAB_DATA.words && window.VOCAB_DATA.words.length) {
+        if (window.VOCAB_DATA && window.VOCAB_DATA.levels && window.VOCAB_DATA.levels.length) {
           return Promise.resolve(window.VOCAB_DATA);
         }
         return fetch("words.json").then(function (r) {
@@ -517,25 +725,31 @@
 
       window.__vocabTest = {
         getState: function () {
+          var screen = screens.start.classList.contains("active") ? "start"
+            : screens.quiz.classList.contains("active") ? "quiz" : "result";
           return {
-            screen: screens.start.classList.contains("active") ? "start"
-              : screens.quiz.classList.contains("active") ? "quiz" : "result",
-            index: index,
-            total: queue.length,
-            currentWord: queue[index] ? queue[index].word : null,
+            screen: screen,
+            currentLevel: levels[levelIndex] ? levels[levelIndex].id : null,
+            currentLevelIndex: levelIndex,
+            currentWord: currentItem ? currentItem.word : null,
             choices: currentChoices.map(function (c) { return c.word; }),
             answers: answers.slice(),
-            score: answers.filter(function (a) { return a.correct; }).length,
+            totalAsked: totalAsked,
+            levelAsked: levelAskedCount,
+            levelCorrect: levelCorrect,
+            consecutiveFails: consecutiveFails,
+            levelResults: levelResults.slice(),
+            estimate: lastScore ? lastScore.rounded : null,
+            rawEstimate: lastScore ? lastScore.estimate : null,
+            attained: lastScore ? lastScore.attained : null
           };
-        },
+        }
       };
 
       loadData().then(function (d) {
         data = d;
+        levels = d.levels || [];
         if (d.subtitle) $("subtitle").textContent = d.subtitle;
-        const n = d.words.length;
-        document.querySelector(".parent-note").textContent =
-          "给家长：这是一个样品，共 " + n + " 个单词。测试过程中不会显示英文单词。";
       }).catch(function (err) {
         document.querySelector(".hint").textContent = "加载词表失败，请把整个文件夹放在一起再打开。";
         console.error(err);
