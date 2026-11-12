@@ -11,8 +11,8 @@ English instructions are below the Chinese ones. 中文说明在前，英文说�
 这是一个给 3 岁左右宝宝用的英语词汇量测试。
 宝宝不用认字：先听单词发音，再从三张图片里选出正确的那张。
 
-本测试是自适应的：从最简单的级别开始，大约 20–30 题。
-测试过程中不会显示英文单词，也不会告诉孩子现在测的是哪一级。
+本测试是自适应的：从最简单的级别开始，会做对就继续往上，可以一直测到第 24 级（全对大约 72 题）。
+测试过程中不会显示英文单词。页面上方会显示当前级别和进度条。做得吃力时，连续两级没过就会结束。
 测完后会给出大约认识多少词、大约达到哪个级别，以及还不熟的单词列表（给家长看）。
 
 一、怎么打开（推荐用 iPad）
@@ -46,8 +46,8 @@ Listen & Pick: Instructions for Parents (English)
 An English vocabulary test for children around 3 years old.
 No reading needed: the child hears a word, then taps the matching picture out of three.
 
-The test is adaptive. It starts at the easiest level and takes about 20–30 questions.
-The English word and the current level are never shown to the child.
+The test is adaptive. It starts at the easiest level and keeps going as long as the child does well, all the way through level 24 if needed (about 72 questions if all are correct).
+The English word is never shown. The current level and a progress bar are shown at the top. The test ends after two levels in a row are not passed, or after level 24.
 At the end it shows, for parents, the estimated number of words known, the approximate level, and a list of words the child hasn't learned yet.
 
 1. How to open (iPad recommended)
@@ -67,9 +67,8 @@ At the end it shows, for parents, the estimated number of words known, the appro
 
 3. How the estimate works
    - Each level has 3 questions. All 3 correct moves up. 2 of 3 adds 2 more questions. 1 or fewer counts as not passed.
-   - The test stops after 2 levels in a row are not passed, after 30 questions, or after level 24.
+   - The test stops after 2 levels in a row are not passed, or after level 24. A high safety cap (120 questions) is only there so the test cannot run on forever; a child who keeps answering well is tested through all 24 levels.
    - Vocabulary = the sum over levels of (share known, corrected for guessing) × (new words in that level). 3,632 words in total across 24 levels.
-   - The 30-question cap means very strong children may be underestimated.
 
 4. Files
    - index.html   the test page

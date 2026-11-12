@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-version="2">
+<html lang="zh-CN" data-version="3">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -146,18 +146,73 @@
     }
     .quiz-top {
       width: 100%;
+      max-width: 520px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 8px 4px 12px;
+      gap: 7px;
+      padding: 4px 4px 10px;
+      flex-shrink: 0;
+    }
+    .level-label {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      line-height: 1.2;
+    }
+    #level-text {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: 0.02em;
+    }
+    #level-text-en {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .progress-bar {
+      position: relative;
+      width: 100%;
+      height: 14px;
+      background: rgba(255,255,255,0.88);
+      border-radius: 999px;
+      box-shadow: inset 0 0 0 2px rgba(91,180,232,0.25);
+    }
+    .progress-fill {
+      height: 100%;
+      width: 4%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #F6D56B 0%, #FF8A5B 100%);
+      box-shadow: 0 1px 4px rgba(229, 111, 64, 0.25);
+      transition: width 0.35s ease;
+    }
+    .progress-star {
+      position: absolute;
+      top: 50%;
+      left: 4%;
+      transform: translate(-50%, -50%);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #fff;
+      color: #F0B429;
+      font-size: 15px;
+      line-height: 22px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(43, 42, 74, 0.18);
+      transition: left 0.35s ease;
+      pointer-events: none;
     }
     .stars {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       gap: 7px;
       justify-content: center;
-      min-height: 16px;
-      max-width: 520px;
+      min-height: 12px;
     }
     .dot {
       width: 12px;
@@ -397,7 +452,12 @@
       }
     }
     @media (orientation: landscape) and (max-height: 700px) {
-      .quiz-top { padding: 2px 4px 4px; }
+      .quiz-top { padding: 0 4px 4px; gap: 4px; max-width: 460px; }
+      #level-text { font-size: 13px; }
+      #level-text-en { font-size: 11px; }
+      .progress-bar { height: 10px; }
+      .progress-star { width: 16px; height: 16px; font-size: 11px; line-height: 16px; }
+      .dot { width: 9px; height: 9px; }
       .speaker { width: 64px; height: 64px; margin: 2px 0 8px; }
       .speaker svg { width: 32px; height: 32px; }
       .choice { padding: 8px; border-radius: 22px; }
@@ -422,11 +482,19 @@
       <p class="subtitle" id="subtitle">词汇量小测试</p>
       <p class="hint">点「开始」后会听到一个单词。<br>请让宝宝选出对应的那张图片。<br>听不清可以再点上面的小喇叭。</p>
       <button class="btn btn-start" id="btn-start" type="button">开 始</button>
-      <p class="parent-note">给家长：这是一套自适应词汇量测试，从简单的开始，大约 20–30 题。测试过程中不会显示英文单词或级别。答对会亮绿灯并响起叮一声，答错会轻轻指出正确的那张图，再把单词读一遍。</p>
+      <p class="parent-note">给家长：这是一套自适应词汇量测试，从简单的开始。会做对就继续往上，可以一直测到第 24 级。页面上方会显示当前级别和进度。答对会亮绿灯并响起叮一声，答错会轻轻指出正确的那张图，再把单词读一遍。</p>
     </section>
 
     <section id="screen-quiz" class="screen">
       <div class="quiz-top">
+        <div class="level-label">
+          <span id="level-text">第 1 级 / 共 24 级</span>
+          <span id="level-text-en">Level 1 / 24</span>
+        </div>
+        <div class="progress-bar" id="progress-bar" role="progressbar" aria-valuemin="1" aria-valuemax="24" aria-valuenow="1" aria-label="第 1 级，共 24 级">
+          <div class="progress-fill" id="progress-fill"></div>
+          <span class="progress-star" id="progress-star" aria-hidden="true">★</span>
+        </div>
         <div class="stars" id="stars" aria-hidden="true"></div>
       </div>
       <button class="btn speaker" id="btn-replay" type="button" aria-label="再听一次">
@@ -465,12 +533,12 @@
     </section>
   </div>
 
-  <script src="words.js?v=2"></script>
+  <script src="words.js?v=3"></script>
   <script>
     (function () {
       "use strict";
 
-      var MAX_QUESTIONS = 30;
+      var MAX_QUESTIONS = 120;
       var audio = new Audio();
       audio.preload = "auto";
       audio.setAttribute("playsinline", "true");
@@ -612,13 +680,27 @@
         if (leaveTimer) { window.clearTimeout(leaveTimer); leaveTimer = 0; }
       }
 
-      function renderStars() {
+      function renderProgress() {
+        var totalLevels = levels.length || 24;
+        var n = levelIndex + 1;
+        $("level-text").textContent = "第 " + n + " 级 / 共 " + totalLevels + " 级";
+        $("level-text-en").textContent = "Level " + n + " / " + totalLevels;
+        var pct = (n / totalLevels) * 100;
+        $("progress-fill").style.width = pct + "%";
+        $("progress-star").style.left = pct + "%";
+        var bar = $("progress-bar");
+        bar.setAttribute("aria-valuenow", String(n));
+        bar.setAttribute("aria-valuemax", String(totalLevels));
+        bar.setAttribute("aria-label", "第 " + n + " 级，共 " + totalLevels + " 级");
+
         var box = $("stars");
         box.innerHTML = "";
+        var inLevel = askedWords.length;
+        var planned = inLevel > 3 ? 5 : 3;
         var i;
-        for (i = 0; i < totalAsked; i++) {
+        for (i = 0; i < planned; i++) {
           var d = document.createElement("span");
-          d.className = "dot" + (i < totalAsked - 1 ? " filled" : " current");
+          d.className = "dot" + (i < inLevel - 1 ? " filled" : (i === inLevel - 1 ? " current" : ""));
           box.appendChild(d);
         }
       }
@@ -659,7 +741,7 @@
         totalAsked += 1;
         currentChoices = shuffle([currentItem].concat(pickDistractors(currentItem, levelIndex)));
 
-        renderStars();
+        renderProgress();
         var box = $("choices");
         box.classList.remove("leaving", "is-locked");
         box.classList.add("entering");
@@ -981,7 +1063,7 @@
       });
 
       window.__vocabTest = {
-        version: "2",
+        version: "3",
         getState: function () {
           var screen = screens.start.classList.contains("active") ? "start"
             : screens.quiz.classList.contains("active") ? "quiz" : "result";
@@ -990,6 +1072,10 @@
             locked: locked,
             currentLevel: levels[levelIndex] ? levels[levelIndex].id : null,
             currentLevelIndex: levelIndex,
+            levelNumber: levels.length ? levelIndex + 1 : 0,
+            levelTotal: levels.length,
+            levelLabel: $("level-text") ? $("level-text").textContent : "",
+            progressPct: levels.length ? ((levelIndex + 1) / levels.length) * 100 : 0,
             currentWord: currentItem ? currentItem.word : null,
             choices: currentChoices.map(function (c) { return c.word; }),
             answers: answers.slice(),
