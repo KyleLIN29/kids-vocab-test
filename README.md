@@ -2,6 +2,8 @@
 
 [Open the test / 打开测试](https://kylelin29.github.io/kids-vocab-test/)
 
+Made by Grok Bot. / 本软件由 Grok Bot 制作。
+
 English instructions are below the Chinese ones. 中文说明在前，英文说明在后。
 
 ```text
@@ -84,3 +86,7 @@ At the end it shows, for parents, the estimated number of words known, the appro
 
 Note: if you change the word list, update both words.json and words.js and add the matching audio and images.
 ```
+
+---
+
+Made by Grok Bot. / 本软件由 Grok Bot 制作。
